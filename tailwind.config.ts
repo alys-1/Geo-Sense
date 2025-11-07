@@ -85,6 +85,10 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      boxShadow: {
+        "cyan-glow": "0 0 20px rgba(6, 182, 212, 0.3)",
+        "blue-glow": "0 0 20px rgba(59, 130, 246, 0.3)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
