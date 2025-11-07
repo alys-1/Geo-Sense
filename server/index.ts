@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { searchAreas, searchPOIs, getTrafficFlow, calculateRoute } from "./routes/tomtom";
 
 export function createServer() {
   const app = express();
@@ -18,6 +19,12 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+
+  // TomTom API proxy routes
+  app.get("/api/tomtom/search-areas", searchAreas);
+  app.get("/api/tomtom/search-pois", searchPOIs);
+  app.get("/api/tomtom/traffic-flow", getTrafficFlow);
+  app.get("/api/tomtom/calculate-route", calculateRoute);
 
   return app;
 }
