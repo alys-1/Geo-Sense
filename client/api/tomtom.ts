@@ -1,11 +1,9 @@
 import axios from "axios";
 
-// TomTom API configuration
-// In production, these should be environment variables
-const TOMTOM_API_KEY = process.env.REACT_APP_TOMTOM_API_KEY || "demo";
+const TOMTOM_API_KEY = import.meta.env.REACT_APP_TOMTOM_API_KEY || "demo";
 const TOMTOM_BASE_URL = "https://api.tomtom.com";
 
-interface POI {
+export interface POI {
   id: string;
   name: string;
   type: string;
@@ -13,9 +11,10 @@ interface POI {
     lat: number;
     lon: number;
   };
+  address?: string;
 }
 
-interface TrafficFlowSegment {
+export interface TrafficFlowSegment {
   id: string;
   speedKmH: number;
   freeFlowSpeedKmH: number;
@@ -26,7 +25,19 @@ interface TrafficFlowSegment {
   };
 }
 
-interface ZoneClassification {
+export interface Route {
+  distance: number;
+  duration: number;
+  summary: {
+    lengthInMeters: number;
+    travelTimeInSeconds: number;
+  };
+  legs: Array<{
+    points: Array<{ latitude: number; longitude: number }>;
+  }>;
+}
+
+export interface ZoneClassification {
   zoneId: string;
   category: "Commercial" | "Residential" | "Mixed-Use";
   poiDensity: number;
@@ -34,8 +45,41 @@ interface ZoneClassification {
   confidence: number;
 }
 
+export interface SearchResult {
+  id: string;
+  position: {
+    lat: number;
+    lon: number;
+  };
+  address: string;
+  poi?: {
+    name: string;
+  };
+  type: string;
+}
+
 /**
- * Search for Points of Interest within a bounding box
+ * Search for areas by query
+ */
+export const searchAreas = async (query: string): Promise<SearchResult[]> => {
+  try {
+    const response = await axios.get(`${TOMTOM_BASE_URL}/search/2/search.json`, {
+      params: {
+        key: TOMTOM_API_KEY,
+        query,
+        limit: 10,
+      },
+    });
+
+    return response.data.results || [];
+  } catch (error) {
+    console.error("Error searching areas:", error);
+    return [];
+  }
+};
+
+/**
+ * Search for Points of Interest within a bounding box or nearby a location
  */
 export const searchPOIs = async (
   lat: number,
@@ -50,18 +94,20 @@ export const searchPOIs = async (
         lat,
         lon,
         radius,
+        limit: 50,
         ...(query && { query }),
       },
     });
 
-    return response.data.results.map((result: any) => ({
+    return (response.data.results || []).map((result: any) => ({
       id: result.id,
-      name: result.poi?.name || result.address?.streetName,
+      name: result.poi?.name || result.address?.streetName || "Unknown",
       type: result.poi?.classifications?.[0]?.name || "Unknown",
       position: {
         lat: result.position.lat,
         lon: result.position.lon,
       },
+      address: result.address?.freeformAddress,
     }));
   } catch (error) {
     console.error("Error fetching POIs:", error);
@@ -77,14 +123,18 @@ export const getTrafficFlow = async (
   lon: number
 ): Promise<TrafficFlowSegment[]> => {
   try {
-    const response = await axios.get(`${TOMTOM_BASE_URL}/traffic/services/4/flowSegmentData/absolute/10/json`, {
-      params: {
-        key: TOMTOM_API_KEY,
-        point: `${lat},${lon}`,
-      },
-    });
+    const response = await axios.get(
+      `${TOMTOM_BASE_URL}/traffic/services/4/flowSegmentData/absolute/10/json`,
+      {
+        params: {
+          key: TOMTOM_API_KEY,
+          point: `${lat},${lon}`,
+        },
+      }
+    );
 
-    return response.data.flowSegmentData.map((segment: any) => ({
+    const flowData = response.data.flowSegmentData || [];
+    return flowData.map((segment: any) => ({
       id: segment.segmentId,
       speedKmH: segment.currentSpeed,
       freeFlowSpeedKmH: segment.freeFlowSpeed,
@@ -109,11 +159,7 @@ export const calculateRoute = async (
   endLat: number,
   endLon: number,
   routeType: "fastest" | "eco" | "safe" = "fastest"
-): Promise<{
-  distance: number;
-  duration: number;
-  polyline: string;
-}> => {
+): Promise<Route> => {
   try {
     const response = await axios.get(
       `${TOMTOM_BASE_URL}/routing/1/calculateRoute/${startLat},${startLon}:${endLat},${endLon}/json`,
@@ -130,7 +176,11 @@ export const calculateRoute = async (
     return {
       distance: route.summary.lengthInMeters,
       duration: route.summary.travelTimeInSeconds,
-      polyline: route.legs[0].points,
+      summary: {
+        lengthInMeters: route.summary.lengthInMeters,
+        travelTimeInSeconds: route.summary.travelTimeInSeconds,
+      },
+      legs: route.legs,
     };
   } catch (error) {
     console.error("Error calculating route:", error);
@@ -139,8 +189,45 @@ export const calculateRoute = async (
 };
 
 /**
+ * Get routing with geo waypoints (for walk routes, safe routes)
+ */
+export const getRouteWithWaypoints = async (
+  waypoints: Array<{ lat: number; lon: number }>,
+  routeType: "fastest" | "pedestrian" = "fastest"
+): Promise<Route> => {
+  try {
+    const waypointString = waypoints.map((w) => `${w.lat},${w.lon}`).join(":"
+    );
+
+    const response = await axios.get(
+      `${TOMTOM_BASE_URL}/routing/1/calculateRoute/${waypointString}/json`,
+      {
+        params: {
+          key: TOMTOM_API_KEY,
+          routeType,
+          traffic: true,
+        },
+      }
+    );
+
+    const route = response.data.routes[0];
+    return {
+      distance: route.summary.lengthInMeters,
+      duration: route.summary.travelTimeInSeconds,
+      summary: {
+        lengthInMeters: route.summary.lengthInMeters,
+        travelTimeInSeconds: route.summary.travelTimeInSeconds,
+      },
+      legs: route.legs,
+    };
+  } catch (error) {
+    console.error("Error calculating route with waypoints:", error);
+    throw error;
+  }
+};
+
+/**
  * Classify zones based on POI density and traffic ratio
- * This is a client-side classification combining TomTom data
  */
 export const classifyZone = (
   poiCount: number,
@@ -164,7 +251,6 @@ export const classifyZone = (
     category = "Mixed-Use";
   }
 
-  // Confidence is higher when traffic and POI patterns align with category
   let confidence = 0.5;
   if (category === "Commercial" && trafficIntensity > 60) {
     confidence = Math.min(0.95, 0.5 + (trafficIntensity - 50) * 0.01);
@@ -181,4 +267,42 @@ export const classifyZone = (
     trafficRatio: trafficIntensity,
     confidence,
   };
+};
+
+/**
+ * Get traffic congestion level (0-100)
+ */
+export const getTrafficCongestionLevel = async (
+  lat: number,
+  lon: number
+): Promise<number> => {
+  try {
+    const flowData = await getTrafficFlow(lat, lon);
+    if (flowData.length === 0) {
+      return 50; // Default neutral congestion
+    }
+
+    const avgSpeed = flowData.reduce((sum, seg) => sum + seg.currentSpeed, 0) / flowData.length;
+    const avgFreeFlow = flowData.reduce((sum, seg) => sum + seg.freeFlowSpeedKmH, 0) / flowData.length;
+
+    // Calculate congestion as percentage of free flow speed
+    const congestion = Math.max(0, Math.min(100, ((avgFreeFlow - avgSpeed) / avgFreeFlow) * 100));
+    return Math.round(congestion);
+  } catch {
+    return 50;
+  }
+};
+
+/**
+ * Analyze POI categories for a zone
+ */
+export const analyzePOICategories = (pois: POI[]): Record<string, number> => {
+  const categories: Record<string, number> = {};
+
+  pois.forEach((poi) => {
+    const category = poi.type.toLowerCase();
+    categories[category] = (categories[category] || 0) + 1;
+  });
+
+  return categories;
 };
