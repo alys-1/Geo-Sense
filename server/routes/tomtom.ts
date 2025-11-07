@@ -1,7 +1,8 @@
 import { RequestHandler } from "express";
 import axios from "axios";
 
-const TOMTOM_API_KEY = process.env.REACT_APP_TOMTOM_API_KEY || "X47KFIvPV5LB2FKHlVI7zIdaOU3GoUQ9";
+const TOMTOM_API_KEY =
+  process.env.REACT_APP_TOMTOM_API_KEY || "X47KFIvPV5LB2FKHlVI7zIdaOU3GoUQ9";
 const TOMTOM_BASE_URL = "https://api.tomtom.com";
 
 export const searchAreas: RequestHandler = async (req, res) => {
@@ -12,13 +13,16 @@ export const searchAreas: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: "Query parameter is required" });
     }
 
-    const response = await axios.get(`${TOMTOM_BASE_URL}/search/2/search.json`, {
-      params: {
-        key: TOMTOM_API_KEY,
-        query,
-        limit: 10,
+    const response = await axios.get(
+      `${TOMTOM_BASE_URL}/search/2/search.json`,
+      {
+        params: {
+          key: TOMTOM_API_KEY,
+          query,
+          limit: 10,
+        },
       },
-    });
+    );
 
     res.json(response.data.results || []);
   } catch (error: any) {
@@ -32,19 +36,24 @@ export const searchPOIs: RequestHandler = async (req, res) => {
     const { lat, lon, radius, query } = req.query;
 
     if (!lat || !lon) {
-      return res.status(400).json({ error: "lat and lon parameters are required" });
+      return res
+        .status(400)
+        .json({ error: "lat and lon parameters are required" });
     }
 
-    const response = await axios.get(`${TOMTOM_BASE_URL}/search/2/nearby.json`, {
-      params: {
-        key: TOMTOM_API_KEY,
-        lat,
-        lon,
-        radius: radius || 5000,
-        limit: 50,
-        ...(query && { query }),
+    const response = await axios.get(
+      `${TOMTOM_BASE_URL}/search/2/nearby.json`,
+      {
+        params: {
+          key: TOMTOM_API_KEY,
+          lat,
+          lon,
+          radius: radius || 5000,
+          limit: 50,
+          ...(query && { query }),
+        },
       },
-    });
+    );
 
     const pois = (response.data.results || []).map((result: any) => ({
       id: result.id,
@@ -69,7 +78,9 @@ export const getTrafficFlow: RequestHandler = async (req, res) => {
     const { lat, lon } = req.query;
 
     if (!lat || !lon) {
-      return res.status(400).json({ error: "lat and lon parameters are required" });
+      return res
+        .status(400)
+        .json({ error: "lat and lon parameters are required" });
     }
 
     const response = await axios.get(
@@ -79,19 +90,21 @@ export const getTrafficFlow: RequestHandler = async (req, res) => {
           key: TOMTOM_API_KEY,
           point: `${lat},${lon}`,
         },
-      }
+      },
     );
 
-    const flowData = (response.data.flowSegmentData || []).map((segment: any) => ({
-      id: segment.segmentId,
-      speedKmH: segment.currentSpeed,
-      freeFlowSpeedKmH: segment.freeFlowSpeed,
-      currentSpeed: segment.currentSpeed,
-      position: {
-        lat: segment.coordinates[0][1],
-        lon: segment.coordinates[0][0],
-      },
-    }));
+    const flowData = (response.data.flowSegmentData || []).map(
+      (segment: any) => ({
+        id: segment.segmentId,
+        speedKmH: segment.currentSpeed,
+        freeFlowSpeedKmH: segment.freeFlowSpeed,
+        currentSpeed: segment.currentSpeed,
+        position: {
+          lat: segment.coordinates[0][1],
+          lon: segment.coordinates[0][0],
+        },
+      }),
+    );
 
     res.json(flowData);
   } catch (error: any) {
@@ -105,7 +118,9 @@ export const calculateRoute: RequestHandler = async (req, res) => {
     const { startLat, startLon, endLat, endLon, routeType } = req.query;
 
     if (!startLat || !startLon || !endLat || !endLon) {
-      return res.status(400).json({ error: "Start and end coordinates are required" });
+      return res
+        .status(400)
+        .json({ error: "Start and end coordinates are required" });
     }
 
     const response = await axios.get(
@@ -116,7 +131,7 @@ export const calculateRoute: RequestHandler = async (req, res) => {
           routeType: routeType || "fastest",
           traffic: true,
         },
-      }
+      },
     );
 
     const route = response.data.routes[0];

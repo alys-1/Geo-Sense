@@ -2,13 +2,45 @@ import { useState, useEffect, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Zap, TrendingUp, AlertCircle, Eye, Sparkles, Search, Loader } from "lucide-react";
-import { searchAreas, searchPOIs, getTrafficFlow, getTrafficCongestionLevel, analyzePOICategories, classifyZone } from "@/api/tomtom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Zap,
+  TrendingUp,
+  AlertCircle,
+  Eye,
+  Sparkles,
+  Search,
+  Loader,
+} from "lucide-react";
+import {
+  searchAreas,
+  searchPOIs,
+  getTrafficFlow,
+  getTrafficCongestionLevel,
+  analyzePOICategories,
+  classifyZone,
+} from "@/api/tomtom";
 import { generateZoneSummary } from "@/api/gemini";
 
 interface Zone {
@@ -58,9 +90,12 @@ const categoryColors: Record<string, string> = {
 };
 
 const defaultIcon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -116,9 +151,14 @@ const Dashboard = () => {
         ]);
 
         const categories = analyzePOICategories(pois);
-        const commercial = categories["restaurant"] || categories["shopping"] || 0;
-        const residential = categories["house"] || categories["residential"] || 0;
-        const services = Object.values(categories).reduce((a, b) => a + b, 0) - commercial - residential;
+        const commercial =
+          categories["restaurant"] || categories["shopping"] || 0;
+        const residential =
+          categories["house"] || categories["residential"] || 0;
+        const services =
+          Object.values(categories).reduce((a, b) => a + b, 0) -
+          commercial -
+          residential;
 
         const congestion = await getTrafficCongestionLevel(lat, lng);
 
@@ -158,36 +198,37 @@ const Dashboard = () => {
         setIsLoadingZone(false);
       }
     },
-    []
+    [],
   );
 
-  const handleSearch = useCallback(
-    async (query: string) => {
-      setSearchQuery(query);
-      if (!query.trim()) {
-        setSearchResults([]);
-        setShowSearchResults(false);
-        return;
-      }
+  const handleSearch = useCallback(async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
 
-      setIsSearching(true);
-      try {
-        const results = await searchAreas(query);
-        setSearchResults(results.slice(0, 8));
-        setShowSearchResults(true);
-      } catch (error) {
-        console.error("Search error:", error);
-      } finally {
-        setIsSearching(false);
-      }
-    },
-    []
-  );
+    setIsSearching(true);
+    try {
+      const results = await searchAreas(query);
+      setSearchResults(results.slice(0, 8));
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
 
   const handleSelectSearchResult = useCallback(
     async (result: SearchResult) => {
       const zoneName = result.poi?.name || result.address || "Search Result";
-      const zone = await loadZoneData(result.position.lat, result.position.lon, zoneName);
+      const zone = await loadZoneData(
+        result.position.lat,
+        result.position.lon,
+        zoneName,
+      );
       if (zone) {
         setZones((prev) => [zone, ...prev]);
         setSelectedZone(zone);
@@ -195,7 +236,7 @@ const Dashboard = () => {
       setSearchQuery("");
       setShowSearchResults(false);
     },
-    [loadZoneData]
+    [loadZoneData],
   );
 
   const handleExplainWithGemini = async () => {
@@ -219,7 +260,8 @@ const Dashboard = () => {
     }
   };
 
-  const getCategoryColor = (category: string) => categoryColors[category] || "#6366F1";
+  const getCategoryColor = (category: string) =>
+    categoryColors[category] || "#6366F1";
 
   if (!selectedZone) {
     return (
@@ -237,8 +279,12 @@ const Dashboard = () => {
       {/* Header Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Zone Analysis Dashboard</h2>
-          <p className="text-slate-400">Real-time urban mobility and zone classification for Pune</p>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Zone Analysis Dashboard
+          </h2>
+          <p className="text-slate-400">
+            Real-time urban mobility and zone classification for Pune
+          </p>
         </div>
         <div className="flex items-end justify-end gap-2">
           <Button
@@ -273,7 +319,9 @@ const Dashboard = () => {
               onChange={(e) => handleSearch(e.target.value)}
               className="bg-slate-700 border-slate-600 text-white placeholder-slate-500"
             />
-            {isSearching && <Loader className="w-4 h-4 animate-spin text-cyan-400" />}
+            {isSearching && (
+              <Loader className="w-4 h-4 animate-spin text-cyan-400" />
+            )}
           </div>
 
           {/* Search Results Dropdown */}
@@ -285,7 +333,9 @@ const Dashboard = () => {
                   onClick={() => handleSelectSearchResult(result)}
                   className="w-full text-left px-4 py-3 hover:bg-slate-600 border-b border-slate-600 last:border-b-0 transition-colors"
                 >
-                  <p className="text-white font-medium">{result.poi?.name || result.address}</p>
+                  <p className="text-white font-medium">
+                    {result.poi?.name || result.address}
+                  </p>
                   <p className="text-xs text-slate-400">{result.type}</p>
                 </button>
               ))}
@@ -299,10 +349,14 @@ const Dashboard = () => {
         {/* Map Section */}
         <div className="lg:col-span-2">
           <Card className="overflow-hidden bg-slate-800 border-slate-700 h-[500px]">
-            <MapContainer center={[selectedZone.lat, selectedZone.lng]} zoom={15} className="h-full w-full">
+            <MapContainer
+              center={[selectedZone.lat, selectedZone.lng]}
+              zoom={15}
+              className="h-full w-full"
+            >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
+                attribution="&copy; OpenStreetMap contributors"
               />
               {zones.map((zone) => (
                 <div key={zone.id}>
@@ -316,7 +370,9 @@ const Dashboard = () => {
                     <Popup>
                       <div className="text-sm">
                         <p className="font-bold">{zone.name}</p>
-                        <p className="text-xs text-slate-600">{zone.category}</p>
+                        <p className="text-xs text-slate-600">
+                          {zone.category}
+                        </p>
                         <p className="text-xs">{zone.poiCount} POIs</p>
                       </div>
                     </Popup>
@@ -343,7 +399,9 @@ const Dashboard = () => {
           <Card className="mt-6 bg-slate-800 border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-lg font-semibold text-white">Traffic Pattern - 24h</h3>
+              <h3 className="text-lg font-semibold text-white">
+                Traffic Pattern - 24h
+              </h3>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={mockTrafficData}>
@@ -373,11 +431,16 @@ const Dashboard = () => {
         <div className="space-y-4">
           {/* Zone Selector */}
           <Card className="bg-slate-800 border-slate-700 p-6">
-            <label className="block text-sm font-medium text-slate-300 mb-3">Recent Zones</label>
-            <Select value={selectedZone.id.toString()} onValueChange={(id) => {
-              const zone = zones.find(z => z.id === parseInt(id));
-              if (zone) setSelectedZone(zone);
-            }}>
+            <label className="block text-sm font-medium text-slate-300 mb-3">
+              Recent Zones
+            </label>
+            <Select
+              value={selectedZone.id.toString()}
+              onValueChange={(id) => {
+                const zone = zones.find((z) => z.id === parseInt(id));
+                if (zone) setSelectedZone(zone);
+              }}
+            >
               <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                 <SelectValue />
               </SelectTrigger>
@@ -396,18 +459,26 @@ const Dashboard = () => {
             <div className="flex items-center gap-2 mb-4">
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: getCategoryColor(selectedZone.category) }}
+                style={{
+                  backgroundColor: getCategoryColor(selectedZone.category),
+                }}
               />
-              <h3 className="text-lg font-semibold text-white">{selectedZone.name}</h3>
+              <h3 className="text-lg font-semibold text-white">
+                {selectedZone.name}
+              </h3>
             </div>
             <div className="space-y-3 text-sm">
               <div>
                 <p className="text-slate-400">Classification</p>
-                <p className="text-xl font-bold text-white">{selectedZone.category}</p>
+                <p className="text-xl font-bold text-white">
+                  {selectedZone.category}
+                </p>
               </div>
               <div>
                 <p className="text-slate-400">Total POIs</p>
-                <p className="text-xl font-bold text-white">{selectedZone.poiCount}</p>
+                <p className="text-xl font-bold text-white">
+                  {selectedZone.poiCount}
+                </p>
               </div>
               <div>
                 <p className="text-slate-400">Traffic Intensity</p>
@@ -418,19 +489,25 @@ const Dashboard = () => {
                       style={{ width: `${selectedZone.trafficFlow}%` }}
                     />
                   </div>
-                  <span className="text-white font-semibold">{selectedZone.trafficFlow}%</span>
+                  <span className="text-white font-semibold">
+                    {selectedZone.trafficFlow}%
+                  </span>
                 </div>
               </div>
               <div>
                 <p className="text-slate-400">Confidence Score</p>
-                <p className="text-xl font-bold text-cyan-400">{(selectedZone.confidence * 100).toFixed(0)}%</p>
+                <p className="text-xl font-bold text-cyan-400">
+                  {(selectedZone.confidence * 100).toFixed(0)}%
+                </p>
               </div>
             </div>
           </Card>
 
           {/* POI Breakdown Chart */}
           <Card className="bg-slate-800 border-slate-700 p-6">
-            <h4 className="text-sm font-semibold text-white mb-4">POI Breakdown</h4>
+            <h4 className="text-sm font-semibold text-white mb-4">
+              POI Breakdown
+            </h4>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={[selectedZone.poiBreakdown]}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
@@ -448,7 +525,9 @@ const Dashboard = () => {
                 <Bar dataKey="services" fill="#F59E0B" />
               </BarChart>
             </ResponsiveContainer>
-            <p className="text-xs text-slate-400 mt-3">Mobility: {selectedZone.mobilityPattern}</p>
+            <p className="text-xs text-slate-400 mt-3">
+              Mobility: {selectedZone.mobilityPattern}
+            </p>
           </Card>
 
           {/* Gemini AI Summary */}
@@ -461,7 +540,8 @@ const Dashboard = () => {
               <p className="text-sm text-slate-300 mb-4">{aiSummary}</p>
             ) : (
               <p className="text-sm text-slate-400 mb-4">
-                Click the button below to get AI-powered insights about this zone.
+                Click the button below to get AI-powered insights about this
+                zone.
               </p>
             )}
             <Button

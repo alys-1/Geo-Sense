@@ -2,10 +2,29 @@ import { useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
+} from "recharts";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, AlertTriangle, TrendingUp, Users, Clock, MapPin, Loader } from "lucide-react";
+import {
+  Calendar,
+  AlertTriangle,
+  TrendingUp,
+  Users,
+  Clock,
+  MapPin,
+  Loader,
+} from "lucide-react";
 
 interface Event {
   id: string;
@@ -30,9 +49,12 @@ interface TrafficImpactData {
 }
 
 const defaultIcon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -79,7 +101,9 @@ const Events = () => {
     },
   ]);
 
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(upcomingEvents[0]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(
+    upcomingEvents[0],
+  );
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [mapCenter] = useState<[number, number]>([18.5204, 73.8567]);
 
@@ -104,7 +128,9 @@ const Events = () => {
     if (!selectedEvent) return;
     setIsCreatingAlert(true);
     setTimeout(() => {
-      alert(`✓ Alert created for "${selectedEvent.name}"\n\nYou'll receive notifications:\n• 24 hours before\n• 1 hour before\n• At event start time\n\nRoute alternatives will be suggested.`);
+      alert(
+        `✓ Alert created for "${selectedEvent.name}"\n\nYou'll receive notifications:\n• 24 hours before\n• 1 hour before\n• At event start time\n\nRoute alternatives will be suggested.`,
+      );
       setIsCreatingAlert(false);
     }, 1000);
   }, [selectedEvent]);
@@ -127,18 +153,26 @@ const Events = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Event Impact Tracker</h2>
-        <p className="text-slate-400">Monitor traffic changes near major events and venues</p>
+        <h2 className="text-2xl font-bold text-white mb-2">
+          Event Impact Tracker
+        </h2>
+        <p className="text-slate-400">
+          Monitor traffic changes near major events and venues
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map Section */}
         <div className="lg:col-span-2">
           <Card className="overflow-hidden bg-slate-800 border-slate-700 h-[500px]">
-            <MapContainer center={mapCenter} zoom={12} className="h-full w-full">
+            <MapContainer
+              center={mapCenter}
+              zoom={12}
+              className="h-full w-full"
+            >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
+                attribution="&copy; OpenStreetMap contributors"
               />
               {upcomingEvents.map((event) => (
                 <div key={event.id}>
@@ -148,8 +182,7 @@ const Events = () => {
                     eventHandlers={{
                       click: () => setSelectedEvent(event),
                     }}
-                  >
-                  </Marker>
+                  ></Marker>
                   <Circle
                     center={[event.venue.lat, event.venue.lon]}
                     radius={event.affectedRadius}
@@ -172,7 +205,9 @@ const Events = () => {
             <Card className="mt-6 bg-slate-800 border-slate-700 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-orange-400" />
-                <h3 className="text-lg font-semibold text-white">Predicted Traffic Impact</h3>
+                <h3 className="text-lg font-semibold text-white">
+                  Predicted Traffic Impact
+                </h3>
               </div>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={trafficImpactData}>
@@ -188,7 +223,14 @@ const Events = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="time" stroke="#94A3B8" />
-                  <YAxis stroke="#94A3B8" label={{ value: "Traffic %", angle: -90, position: "insideLeft" }} />
+                  <YAxis
+                    stroke="#94A3B8"
+                    label={{
+                      value: "Traffic %",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#1E293B",
@@ -239,9 +281,13 @@ const Events = () => {
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    <span className="text-lg">{getImpactIcon(event.trafficImpact)}</span>
+                    <span className="text-lg">
+                      {getImpactIcon(event.trafficImpact)}
+                    </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white truncate">{event.name}</p>
+                      <p className="text-sm font-medium text-white truncate">
+                        {event.name}
+                      </p>
                       <p className="text-xs text-slate-400">{event.date}</p>
                     </div>
                   </div>
@@ -257,12 +303,16 @@ const Events = () => {
                 <div className="space-y-4">
                   <div>
                     <p className="text-slate-400 text-xs">Event Type</p>
-                    <p className="text-white font-semibold capitalize">{selectedEvent.type}</p>
+                    <p className="text-white font-semibold capitalize">
+                      {selectedEvent.type}
+                    </p>
                   </div>
 
                   <div>
                     <p className="text-slate-400 text-xs">Date & Time</p>
-                    <p className="text-white font-semibold">{selectedEvent.date}</p>
+                    <p className="text-white font-semibold">
+                      {selectedEvent.date}
+                    </p>
                     <p className="text-sm text-slate-400">
                       {selectedEvent.startTime} - {selectedEvent.endTime}
                     </p>
@@ -277,7 +327,9 @@ const Events = () => {
                   </div>
 
                   <div>
-                    <p className="text-slate-400 text-xs">Traffic Impact Radius</p>
+                    <p className="text-slate-400 text-xs">
+                      Traffic Impact Radius
+                    </p>
                     <div className="flex items-center gap-2 text-white font-semibold">
                       <MapPin className="w-4 h-4 text-red-400" />
                       {selectedEvent.affectedRadius / 1000} km
@@ -288,7 +340,10 @@ const Events = () => {
                     <p className="text-slate-400 text-xs mb-2">Impact Level</p>
                     <div
                       className="px-3 py-1 rounded-full text-center text-white font-bold uppercase text-sm"
-                      style={{ backgroundColor: impactColors[selectedEvent.trafficImpact] + "33" }}
+                      style={{
+                        backgroundColor:
+                          impactColors[selectedEvent.trafficImpact] + "33",
+                      }}
                     >
                       {selectedEvent.trafficImpact}
                     </div>
@@ -300,11 +355,14 @@ const Events = () => {
               <Card className="bg-gradient-to-br from-amber-900/30 to-orange-900/30 border-amber-700/50 p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <AlertTriangle className="w-5 h-5 text-amber-400" />
-                  <h4 className="text-sm font-semibold text-white">Set Traffic Alert</h4>
+                  <h4 className="text-sm font-semibold text-white">
+                    Set Traffic Alert
+                  </h4>
                 </div>
 
                 <p className="text-sm text-slate-300 mb-4">
-                  Get notified about traffic conditions around this event and receive alternate route suggestions.
+                  Get notified about traffic conditions around this event and
+                  receive alternate route suggestions.
                 </p>
 
                 <Button
@@ -328,7 +386,9 @@ const Events = () => {
 
               {/* Recommendations */}
               <Card className="bg-slate-800 border-slate-700 p-6">
-                <h4 className="text-sm font-semibold text-white mb-3">Recommendations</h4>
+                <h4 className="text-sm font-semibold text-white mb-3">
+                  Recommendations
+                </h4>
                 <ul className="space-y-2 text-xs text-slate-300">
                   <li>✓ Avoid the event area 2 hours before and after</li>
                   <li>✓ Use alternate routes via Eastern Bypass</li>

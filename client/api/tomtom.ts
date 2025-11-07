@@ -81,7 +81,7 @@ export const searchPOIs = async (
   lat: number,
   lon: number,
   radius: number = 5000,
-  query: string = ""
+  query: string = "",
 ): Promise<POI[]> => {
   try {
     const response = await axios.get(`/api/tomtom/search-pois`, {
@@ -105,7 +105,7 @@ export const searchPOIs = async (
  */
 export const getTrafficFlow = async (
   lat: number,
-  lon: number
+  lon: number,
 ): Promise<TrafficFlowSegment[]> => {
   try {
     const response = await axios.get(`/api/tomtom/traffic-flow`, {
@@ -127,7 +127,7 @@ export const calculateRoute = async (
   startLon: number,
   endLat: number,
   endLon: number,
-  routeType: "fastest" | "eco" | "safe" = "fastest"
+  routeType: "fastest" | "eco" | "safe" = "fastest",
 ): Promise<Route> => {
   try {
     const response = await axios.get(`/api/tomtom/calculate-route`, {
@@ -152,11 +152,10 @@ export const calculateRoute = async (
  */
 export const getRouteWithWaypoints = async (
   waypoints: Array<{ lat: number; lon: number }>,
-  routeType: "fastest" | "pedestrian" = "fastest"
+  routeType: "fastest" | "pedestrian" = "fastest",
 ): Promise<Route> => {
   try {
-    const waypointString = waypoints.map((w) => `${w.lat},${w.lon}`).join(":"
-    );
+    const waypointString = waypoints.map((w) => `${w.lat},${w.lon}`).join(":");
 
     const response = await axios.get(
       `${TOMTOM_BASE_URL}/routing/1/calculateRoute/${waypointString}/json`,
@@ -166,7 +165,7 @@ export const getRouteWithWaypoints = async (
           routeType,
           traffic: true,
         },
-      }
+      },
     );
 
     const route = response.data.routes[0];
@@ -195,7 +194,7 @@ export const classifyZone = (
     commercial: number;
     residential: number;
     services: number;
-  }
+  },
 ): ZoneClassification => {
   const commercialRatio = poiBreakdown.commercial / poiCount;
   const residentialRatio = poiBreakdown.residential / poiCount;
@@ -233,7 +232,7 @@ export const classifyZone = (
  */
 export const getTrafficCongestionLevel = async (
   lat: number,
-  lon: number
+  lon: number,
 ): Promise<number> => {
   try {
     const flowData = await getTrafficFlow(lat, lon);
@@ -241,11 +240,18 @@ export const getTrafficCongestionLevel = async (
       return 50; // Default neutral congestion
     }
 
-    const avgSpeed = flowData.reduce((sum, seg) => sum + seg.currentSpeed, 0) / flowData.length;
-    const avgFreeFlow = flowData.reduce((sum, seg) => sum + seg.freeFlowSpeedKmH, 0) / flowData.length;
+    const avgSpeed =
+      flowData.reduce((sum, seg) => sum + seg.currentSpeed, 0) /
+      flowData.length;
+    const avgFreeFlow =
+      flowData.reduce((sum, seg) => sum + seg.freeFlowSpeedKmH, 0) /
+      flowData.length;
 
     // Calculate congestion as percentage of free flow speed
-    const congestion = Math.max(0, Math.min(100, ((avgFreeFlow - avgSpeed) / avgFreeFlow) * 100));
+    const congestion = Math.max(
+      0,
+      Math.min(100, ((avgFreeFlow - avgSpeed) / avgFreeFlow) * 100),
+    );
     return Math.round(congestion);
   } catch {
     return 50;

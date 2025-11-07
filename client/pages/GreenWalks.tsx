@@ -1,11 +1,25 @@
 import { useState, useCallback } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  Circle,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Leaf, ArrowRight, MapPin, Clock, AlertCircle, Loader } from "lucide-react";
+import {
+  Leaf,
+  ArrowRight,
+  MapPin,
+  Clock,
+  AlertCircle,
+  Loader,
+} from "lucide-react";
 import { calculateRoute } from "@/api/tomtom";
 
 interface WalkRoute {
@@ -21,9 +35,12 @@ interface WalkRoute {
 }
 
 const defaultIcon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -55,7 +72,7 @@ const GreenWalks = () => {
         startCoords.lon,
         endCoords.lat,
         endCoords.lon,
-        "fastest"
+        "fastest",
       );
 
       const newRoute: WalkRoute = {
@@ -91,30 +108,56 @@ const GreenWalks = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Green Walk Finder</h2>
-        <p className="text-slate-400">Discover calm, low-traffic walking routes through Pune</p>
+        <h2 className="text-2xl font-bold text-white mb-2">
+          Green Walk Finder
+        </h2>
+        <p className="text-slate-400">
+          Discover calm, low-traffic walking routes through Pune
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map Section */}
         <div className="lg:col-span-2">
           <Card className="overflow-hidden bg-slate-800 border-slate-700 h-[500px]">
-            <MapContainer center={mapCenter} zoom={13} className="h-full w-full">
+            <MapContainer
+              center={mapCenter}
+              zoom={13}
+              className="h-full w-full"
+            >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
+                attribution="&copy; OpenStreetMap contributors"
               />
               {selectedRoute && (
                 <>
-                  <Marker position={[selectedRoute.startPoint.lat, selectedRoute.startPoint.lon]} icon={defaultIcon}>
-                    <Popup>Start: {selectedRoute.name.split(" from ")[1]?.split(" to ")[0]}</Popup>
+                  <Marker
+                    position={[
+                      selectedRoute.startPoint.lat,
+                      selectedRoute.startPoint.lon,
+                    ]}
+                    icon={defaultIcon}
+                  >
+                    <Popup>
+                      Start:{" "}
+                      {selectedRoute.name.split(" from ")[1]?.split(" to ")[0]}
+                    </Popup>
                   </Marker>
-                  <Marker position={[selectedRoute.endPoint.lat, selectedRoute.endPoint.lon]} icon={defaultIcon}>
+                  <Marker
+                    position={[
+                      selectedRoute.endPoint.lat,
+                      selectedRoute.endPoint.lon,
+                    ]}
+                    icon={defaultIcon}
+                  >
                     <Popup>End: {selectedRoute.name.split(" to ")[1]}</Popup>
                   </Marker>
                   {selectedRoute.polyline && (
                     <Polyline
-                      positions={selectedRoute.polyline.map((p) => [p.latitude, p.longitude])}
+                      positions={selectedRoute.polyline.map((p) => [
+                        p.latitude,
+                        p.longitude,
+                      ])}
                       pathOptions={{
                         color: trafficColors[selectedRoute.trafficLevel],
                         weight: 3,
@@ -123,7 +166,10 @@ const GreenWalks = () => {
                     />
                   )}
                   <Circle
-                    center={[selectedRoute.startPoint.lat, selectedRoute.startPoint.lon]}
+                    center={[
+                      selectedRoute.startPoint.lat,
+                      selectedRoute.startPoint.lon,
+                    ]}
                     radius={200}
                     pathOptions={{
                       fillColor: trafficColors[selectedRoute.trafficLevel],
@@ -140,15 +186,21 @@ const GreenWalks = () => {
           {/* Route Details */}
           {selectedRoute && (
             <Card className="mt-6 bg-slate-800 border-slate-700 p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">{selectedRoute.name}</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">
+                {selectedRoute.name}
+              </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-slate-400 text-sm">Distance</p>
-                  <p className="text-xl font-bold text-white">{selectedRoute.distance.toFixed(2)} km</p>
+                  <p className="text-xl font-bold text-white">
+                    {selectedRoute.distance.toFixed(2)} km
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm">Duration</p>
-                  <p className="text-xl font-bold text-white">{selectedRoute.duration.toFixed(0)} min</p>
+                  <p className="text-xl font-bold text-white">
+                    {selectedRoute.duration.toFixed(0)} min
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm">Traffic Level</p>
@@ -161,7 +213,9 @@ const GreenWalks = () => {
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm">Difficulty</p>
-                  <p className="text-xl font-bold text-white capitalize">{selectedRoute.difficulty}</p>
+                  <p className="text-xl font-bold text-white capitalize">
+                    {selectedRoute.difficulty}
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-slate-400 mt-4">
@@ -178,12 +232,16 @@ const GreenWalks = () => {
           <Card className="bg-slate-800 border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-4">
               <Leaf className="w-5 h-5 text-green-400" />
-              <h3 className="text-lg font-semibold text-white">Plan Your Walk</h3>
+              <h3 className="text-lg font-semibold text-white">
+                Plan Your Walk
+              </h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">From</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  From
+                </label>
                 <Input
                   placeholder="Starting point (e.g., Baner)"
                   value={startPoint}
@@ -193,7 +251,9 @@ const GreenWalks = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">To</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  To
+                </label>
                 <Input
                   placeholder="Destination (e.g., Oswald Park)"
                   value={endPoint}
@@ -225,7 +285,9 @@ const GreenWalks = () => {
           {/* Recent Routes */}
           {routes.length > 0 && (
             <Card className="bg-slate-800 border-slate-700 p-6">
-              <h4 className="text-sm font-semibold text-white mb-3">Recent Routes</h4>
+              <h4 className="text-sm font-semibold text-white mb-3">
+                Recent Routes
+              </h4>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {routes.map((route) => (
                   <button
@@ -237,7 +299,9 @@ const GreenWalks = () => {
                         : "bg-slate-700 hover:bg-slate-600"
                     }`}
                   >
-                    <p className="text-sm font-medium text-white truncate">{route.name}</p>
+                    <p className="text-sm font-medium text-white truncate">
+                      {route.name}
+                    </p>
                     <div className="flex gap-2 mt-1 text-xs text-slate-400">
                       <span>{route.distance.toFixed(1)} km</span>
                       <span>•</span>

@@ -10,9 +10,12 @@ export default function NotFound() {
           <MapPin className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-5xl font-bold text-white mb-2">404</h1>
-        <h2 className="text-2xl font-semibold text-slate-300 mb-4">Zone Not Found</h2>
+        <h2 className="text-2xl font-semibold text-slate-300 mb-4">
+          Zone Not Found
+        </h2>
         <p className="text-slate-400 mb-8">
-          We couldn't find the location you're looking for. This area hasn't been mapped yet or may have been moved.
+          We couldn't find the location you're looking for. This area hasn't
+          been mapped yet or may have been moved.
         </p>
         <Link to="/">
           <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white">

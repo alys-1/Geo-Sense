@@ -33,16 +33,13 @@ export const useZoneData = ({ initialZones = [] }: UseZoneDataProps = {}) => {
   /**
    * Update a zone's data (simulating real-time updates)
    */
-  const updateZone = useCallback(
-    (zoneId: number, updates: Partial<Zone>) => {
-      setZones((prevZones) =>
-        prevZones.map((zone) =>
-          zone.id === zoneId ? { ...zone, ...updates } : zone
-        )
-      );
-    },
-    []
-  );
+  const updateZone = useCallback((zoneId: number, updates: Partial<Zone>) => {
+    setZones((prevZones) =>
+      prevZones.map((zone) =>
+        zone.id === zoneId ? { ...zone, ...updates } : zone,
+      ),
+    );
+  }, []);
 
   /**
    * Simulate real-time traffic updates
@@ -54,12 +51,9 @@ export const useZoneData = ({ initialZones = [] }: UseZoneDataProps = {}) => {
           ...zone,
           trafficFlow: Math.max(
             10,
-            Math.min(
-              95,
-              zone.trafficFlow + (Math.random() - 0.5) * 10
-            )
+            Math.min(95, zone.trafficFlow + (Math.random() - 0.5) * 10),
           ),
-        }))
+        })),
       );
     }, 5000); // Update every 5 seconds
 
@@ -83,19 +77,22 @@ export const useZoneData = ({ initialZones = [] }: UseZoneDataProps = {}) => {
   /**
    * Classify a zone based on its characteristics
    */
-  const classifyZoneData = useCallback((zoneData: Omit<Zone, "id" | "category" | "confidence">) => {
-    const classification = classifyZone(
-      zoneData.poiCount,
-      zoneData.trafficFlow,
-      zoneData.poiBreakdown
-    );
+  const classifyZoneData = useCallback(
+    (zoneData: Omit<Zone, "id" | "category" | "confidence">) => {
+      const classification = classifyZone(
+        zoneData.poiCount,
+        zoneData.trafficFlow,
+        zoneData.poiBreakdown,
+      );
 
-    return {
-      ...zoneData,
-      category: classification.category,
-      confidence: classification.confidence,
-    };
-  }, []);
+      return {
+        ...zoneData,
+        category: classification.category,
+        confidence: classification.confidence,
+      };
+    },
+    [],
+  );
 
   return {
     zones,
@@ -113,7 +110,9 @@ export const useZoneData = ({ initialZones = [] }: UseZoneDataProps = {}) => {
  * Hook for managing selected zone state
  */
 export const useSelectedZone = (initialZone?: Zone) => {
-  const [selectedZone, setSelectedZone] = useState<Zone | null>(initialZone || null);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(
+    initialZone || null,
+  );
 
   return {
     selectedZone,
@@ -141,13 +140,15 @@ export const useZoneAnalytics = (zone: Zone | null) => {
     // Calculate dominant POI type
     const breakdown = zone.poiBreakdown;
     const dominantPOIType = Object.keys(breakdown).reduce((prev, current) =>
-      breakdown[current as keyof typeof breakdown] > breakdown[prev as keyof typeof breakdown]
+      breakdown[current as keyof typeof breakdown] >
+      breakdown[prev as keyof typeof breakdown]
         ? current
-        : prev
+        : prev,
     );
 
     setAnalytics({
-      dominantPOIType: dominantPOIType.charAt(0).toUpperCase() + dominantPOIType.slice(1),
+      dominantPOIType:
+        dominantPOIType.charAt(0).toUpperCase() + dominantPOIType.slice(1),
       totalPOIs: zone.poiCount,
       mobilityPattern: zone.mobilityPattern,
       confidenceScore: zone.confidence,

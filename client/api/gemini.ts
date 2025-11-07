@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Gemini API configuration
 const GEMINI_API_KEY = import.meta.env.REACT_APP_GEMINI_API_KEY || "demo";
-const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const GEMINI_BASE_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 interface ZoneSummaryInput {
   zoneName: string;
@@ -18,7 +19,7 @@ interface ZoneSummaryInput {
  * Generate AI-powered insights about a zone using Gemini
  */
 export const generateZoneSummary = async (
-  zoneData: ZoneSummaryInput
+  zoneData: ZoneSummaryInput,
 ): Promise<string> => {
   try {
     const prompt = `Analyze the following urban zone in Pune and provide a brief, insightful summary (2-3 sentences):
@@ -50,7 +51,7 @@ Provide practical insights about what this zone is, typical characteristics, and
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (response.data.candidates && response.data.candidates.length > 0) {
@@ -72,10 +73,13 @@ Provide practical insights about what this zone is, typical characteristics, and
 export const generateSafetyRecommendations = async (
   routeDescription: string,
   safetyScore: number,
-  incidents: string[] = []
+  incidents: string[] = [],
 ): Promise<string> => {
   try {
-    const incidentInfo = incidents.length > 0 ? `Recent incidents: ${incidents.join(", ")}` : "No recent incidents reported";
+    const incidentInfo =
+      incidents.length > 0
+        ? `Recent incidents: ${incidents.join(", ")}`
+        : "No recent incidents reported";
 
     const prompt = `Provide safety recommendations for the following route in Pune:
 
@@ -102,7 +106,7 @@ Give practical, actionable safety tips for this route (2-3 sentences).`;
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (response.data.candidates && response.data.candidates.length > 0) {

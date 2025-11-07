@@ -42,7 +42,7 @@ const MainLayout = () => {
                     "px-4 py-3 text-sm font-medium flex items-center gap-2 transition-all border-b-2",
                     isActive
                       ? "text-cyan-400 border-cyan-400 bg-slate-800/50"
-                      : "text-slate-400 border-transparent hover:text-slate-300 hover:bg-slate-800/25"
+                      : "text-slate-400 border-transparent hover:text-slate-300 hover:bg-slate-800/25",
                   )}
                 >
                   <Icon className="w-4 h-4" />
@@ -63,7 +63,8 @@ const MainLayout = () => {
       <footer className="bg-slate-900/50 border-t border-slate-700 py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-slate-400">
-            GeoSense © 2024 • Real-time urban mobility and safety analysis for Pune
+            GeoSense © 2024 • Real-time urban mobility and safety analysis for
+            Pune
           </p>
         </div>
       </footer>

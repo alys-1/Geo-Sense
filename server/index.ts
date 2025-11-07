@@ -2,7 +2,12 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { searchAreas, searchPOIs, getTrafficFlow, calculateRoute } from "./routes/tomtom";
+import {
+  searchAreas,
+  searchPOIs,
+  getTrafficFlow,
+  calculateRoute,
+} from "./routes/tomtom";
 
 export function createServer() {
   const app = express();

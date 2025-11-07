@@ -1,11 +1,25 @@
 import { useState, useCallback } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, MapPin, AlertTriangle, Share2, Phone, Loader, CheckCircle } from "lucide-react";
+import {
+  Shield,
+  MapPin,
+  AlertTriangle,
+  Share2,
+  Phone,
+  Loader,
+  CheckCircle,
+} from "lucide-react";
 import { calculateRoute } from "@/api/tomtom";
 
 interface SafeRoute {
@@ -21,9 +35,12 @@ interface SafeRoute {
 }
 
 const defaultIcon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
@@ -58,7 +75,7 @@ const Safety = () => {
         startCoords.lon,
         endCoords.lat,
         endCoords.lon,
-        "fastest"
+        "fastest",
       );
 
       const newRoute: SafeRoute = {
@@ -100,7 +117,7 @@ const Safety = () => {
     (index: number) => {
       setContacts(contacts.filter((_, i) => i !== index));
     },
-    [contacts]
+    [contacts],
   );
 
   const shareViaWhatsApp = useCallback(async () => {
@@ -115,7 +132,9 @@ const Safety = () => {
       // Open WhatsApp with pre-filled message
       if (contacts.length > 0) {
         // For demo: show success message instead of actually opening WhatsApp
-        alert(`WhatsApp sharing ready!\n\n${message}\n\nContacts: ${contacts.join(", ")}`);
+        alert(
+          `WhatsApp sharing ready!\n\n${message}\n\nContacts: ${contacts.join(", ")}`,
+        );
       } else {
         alert("Please add at least one contact to share with.");
       }
@@ -133,30 +152,53 @@ const Safety = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Safe Route Recommender</h2>
-        <p className="text-slate-400">Find the safest routes and share live location with trusted contacts</p>
+        <h2 className="text-2xl font-bold text-white mb-2">
+          Safe Route Recommender
+        </h2>
+        <p className="text-slate-400">
+          Find the safest routes and share live location with trusted contacts
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Map Section */}
         <div className="lg:col-span-2">
           <Card className="overflow-hidden bg-slate-800 border-slate-700 h-[500px]">
-            <MapContainer center={mapCenter} zoom={13} className="h-full w-full">
+            <MapContainer
+              center={mapCenter}
+              zoom={13}
+              className="h-full w-full"
+            >
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; OpenStreetMap contributors'
+                attribution="&copy; OpenStreetMap contributors"
               />
               {selectedRoute && (
                 <>
-                  <Marker position={[selectedRoute.startPoint.lat, selectedRoute.startPoint.lon]} icon={defaultIcon}>
+                  <Marker
+                    position={[
+                      selectedRoute.startPoint.lat,
+                      selectedRoute.startPoint.lon,
+                    ]}
+                    icon={defaultIcon}
+                  >
                     <Popup>Start: {selectedRoute.name}</Popup>
                   </Marker>
-                  <Marker position={[selectedRoute.endPoint.lat, selectedRoute.endPoint.lon]} icon={defaultIcon}>
+                  <Marker
+                    position={[
+                      selectedRoute.endPoint.lat,
+                      selectedRoute.endPoint.lon,
+                    ]}
+                    icon={defaultIcon}
+                  >
                     <Popup>End: {selectedRoute.name}</Popup>
                   </Marker>
                   {selectedRoute.polyline && (
                     <Polyline
-                      positions={selectedRoute.polyline.map((p) => [p.latitude, p.longitude])}
+                      positions={selectedRoute.polyline.map((p) => [
+                        p.latitude,
+                        p.longitude,
+                      ])}
                       pathOptions={{
                         color: getSafetyColor(selectedRoute.safetyScore),
                         weight: 4,
@@ -174,11 +216,18 @@ const Safety = () => {
             <Card className="mt-6 bg-slate-800 border-slate-700 p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{selectedRoute.name}</h3>
-                  <p className="text-sm text-slate-400 mt-1">Safety-optimized route</p>
+                  <h3 className="text-lg font-semibold text-white">
+                    {selectedRoute.name}
+                  </h3>
+                  <p className="text-sm text-slate-400 mt-1">
+                    Safety-optimized route
+                  </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-3xl font-bold" style={{ color: getSafetyColor(selectedRoute.safetyScore) }}>
+                  <p
+                    className="text-3xl font-bold"
+                    style={{ color: getSafetyColor(selectedRoute.safetyScore) }}
+                  >
                     {selectedRoute.safetyScore.toFixed(0)}
                   </p>
                   <p className="text-xs text-slate-400">Safety Score</p>
@@ -188,11 +237,15 @@ const Safety = () => {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div>
                   <p className="text-slate-400 text-sm">Distance</p>
-                  <p className="text-xl font-bold text-white">{selectedRoute.distance.toFixed(2)} km</p>
+                  <p className="text-xl font-bold text-white">
+                    {selectedRoute.distance.toFixed(2)} km
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm">Duration</p>
-                  <p className="text-xl font-bold text-white">{selectedRoute.duration.toFixed(0)} min</p>
+                  <p className="text-xl font-bold text-white">
+                    {selectedRoute.duration.toFixed(0)} min
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm">Risk Level</p>
@@ -201,10 +254,15 @@ const Safety = () => {
               </div>
 
               <div className="bg-slate-700/50 rounded-lg p-4">
-                <p className="text-sm font-medium text-white mb-3">Safety Features</p>
+                <p className="text-sm font-medium text-white mb-3">
+                  Safety Features
+                </p>
                 <ul className="space-y-2">
                   {selectedRoute.riskFactors.map((factor, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-sm text-slate-300">
+                    <li
+                      key={idx}
+                      className="flex items-center gap-2 text-sm text-slate-300"
+                    >
                       <CheckCircle className="w-4 h-4 text-green-400" />
                       {factor}
                     </li>
@@ -220,12 +278,16 @@ const Safety = () => {
           <Card className="bg-slate-800 border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-red-400" />
-              <h3 className="text-lg font-semibold text-white">Plan Safe Route</h3>
+              <h3 className="text-lg font-semibold text-white">
+                Plan Safe Route
+              </h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">From</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  From
+                </label>
                 <Input
                   placeholder="Starting point"
                   value={startPoint}
@@ -235,7 +297,9 @@ const Safety = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">To</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  To
+                </label>
                 <Input
                   placeholder="Destination"
                   value={endPoint}
@@ -268,7 +332,9 @@ const Safety = () => {
           <Card className="bg-slate-800 border-slate-700 p-6">
             <div className="flex items-center gap-2 mb-4">
               <Phone className="w-5 h-5 text-orange-400" />
-              <h4 className="text-sm font-semibold text-white">Emergency Contacts</h4>
+              <h4 className="text-sm font-semibold text-white">
+                Emergency Contacts
+              </h4>
             </div>
 
             <div className="space-y-3">
@@ -291,7 +357,10 @@ const Safety = () => {
 
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {contacts.map((contact, idx) => (
-                  <div key={idx} className="flex items-center justify-between bg-slate-700 p-2 rounded text-sm text-slate-300">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between bg-slate-700 p-2 rounded text-sm text-slate-300"
+                  >
                     <span>{contact}</span>
                     <button
                       onClick={() => removeContact(idx)}
@@ -310,11 +379,14 @@ const Safety = () => {
             <Card className="bg-gradient-to-br from-green-900/30 to-emerald-900/30 border-green-700/50 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Share2 className="w-5 h-5 text-green-400" />
-                <h4 className="text-sm font-semibold text-white">Share Live Location</h4>
+                <h4 className="text-sm font-semibold text-white">
+                  Share Live Location
+                </h4>
               </div>
 
               <p className="text-sm text-slate-300 mb-4">
-                Share your route and safety score with trusted contacts via WhatsApp.
+                Share your route and safety score with trusted contacts via
+                WhatsApp.
               </p>
 
               <Button
@@ -336,7 +408,9 @@ const Safety = () => {
               </Button>
 
               {contacts.length === 0 && (
-                <p className="text-xs text-slate-400 mt-2">Add contacts to enable sharing</p>
+                <p className="text-xs text-slate-400 mt-2">
+                  Add contacts to enable sharing
+                </p>
               )}
             </Card>
           )}
