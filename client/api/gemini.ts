@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Gemini API configuration
-const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || "demo";
+const GEMINI_API_KEY = import.meta.env.REACT_APP_GEMINI_API_KEY || "demo";
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
 interface ZoneSummaryInput {
