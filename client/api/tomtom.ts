@@ -63,15 +63,11 @@ export interface SearchResult {
  */
 export const searchAreas = async (query: string): Promise<SearchResult[]> => {
   try {
-    const response = await axios.get(`${TOMTOM_BASE_URL}/search/2/search.json`, {
-      params: {
-        key: TOMTOM_API_KEY,
-        query,
-        limit: 10,
-      },
+    const response = await axios.get(`/api/tomtom/search-areas`, {
+      params: { query },
     });
 
-    return response.data.results || [];
+    return response.data || [];
   } catch (error) {
     console.error("Error searching areas:", error);
     return [];
@@ -88,27 +84,16 @@ export const searchPOIs = async (
   query: string = ""
 ): Promise<POI[]> => {
   try {
-    const response = await axios.get(`${TOMTOM_BASE_URL}/search/2/nearby.json`, {
+    const response = await axios.get(`/api/tomtom/search-pois`, {
       params: {
-        key: TOMTOM_API_KEY,
         lat,
         lon,
         radius,
-        limit: 50,
         ...(query && { query }),
       },
     });
 
-    return (response.data.results || []).map((result: any) => ({
-      id: result.id,
-      name: result.poi?.name || result.address?.streetName || "Unknown",
-      type: result.poi?.classifications?.[0]?.name || "Unknown",
-      position: {
-        lat: result.position.lat,
-        lon: result.position.lon,
-      },
-      address: result.address?.freeformAddress,
-    }));
+    return response.data || [];
   } catch (error) {
     console.error("Error fetching POIs:", error);
     return [];
@@ -123,27 +108,11 @@ export const getTrafficFlow = async (
   lon: number
 ): Promise<TrafficFlowSegment[]> => {
   try {
-    const response = await axios.get(
-      `${TOMTOM_BASE_URL}/traffic/services/4/flowSegmentData/absolute/10/json`,
-      {
-        params: {
-          key: TOMTOM_API_KEY,
-          point: `${lat},${lon}`,
-        },
-      }
-    );
+    const response = await axios.get(`/api/tomtom/traffic-flow`, {
+      params: { lat, lon },
+    });
 
-    const flowData = response.data.flowSegmentData || [];
-    return flowData.map((segment: any) => ({
-      id: segment.segmentId,
-      speedKmH: segment.currentSpeed,
-      freeFlowSpeedKmH: segment.freeFlowSpeed,
-      currentSpeed: segment.currentSpeed,
-      position: {
-        lat: segment.coordinates[0][1],
-        lon: segment.coordinates[0][0],
-      },
-    }));
+    return response.data || [];
   } catch (error) {
     console.error("Error fetching traffic flow:", error);
     return [];
@@ -161,27 +130,17 @@ export const calculateRoute = async (
   routeType: "fastest" | "eco" | "safe" = "fastest"
 ): Promise<Route> => {
   try {
-    const response = await axios.get(
-      `${TOMTOM_BASE_URL}/routing/1/calculateRoute/${startLat},${startLon}:${endLat},${endLon}/json`,
-      {
-        params: {
-          key: TOMTOM_API_KEY,
-          routeType,
-          traffic: true,
-        },
-      }
-    );
-
-    const route = response.data.routes[0];
-    return {
-      distance: route.summary.lengthInMeters,
-      duration: route.summary.travelTimeInSeconds,
-      summary: {
-        lengthInMeters: route.summary.lengthInMeters,
-        travelTimeInSeconds: route.summary.travelTimeInSeconds,
+    const response = await axios.get(`/api/tomtom/calculate-route`, {
+      params: {
+        startLat,
+        startLon,
+        endLat,
+        endLon,
+        routeType,
       },
-      legs: route.legs,
-    };
+    });
+
+    return response.data;
   } catch (error) {
     console.error("Error calculating route:", error);
     throw error;
