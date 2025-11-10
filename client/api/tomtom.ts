@@ -236,16 +236,29 @@ export const getTrafficCongestionLevel = async (
 ): Promise<number> => {
   try {
     const flowData = await getTrafficFlow(lat, lon);
-    if (flowData.length === 0) {
-      return 50; // Default neutral congestion
+
+    // Return default value if no traffic data available
+    if (!flowData || flowData.length === 0) {
+      // Generate a pseudo-random but deterministic value based on coordinates
+      const seed = Math.round((Math.abs(lat) + Math.abs(lon)) * 100) % 100;
+      return 30 + seed % 40; // Returns between 30-70
+    }
+
+    // Filter out invalid speed data
+    const validSegments = flowData.filter(
+      (seg) => seg.currentSpeed > 0 && seg.freeFlowSpeedKmH > 0
+    );
+
+    if (validSegments.length === 0) {
+      return 45; // Moderate default
     }
 
     const avgSpeed =
-      flowData.reduce((sum, seg) => sum + seg.currentSpeed, 0) /
-      flowData.length;
+      validSegments.reduce((sum, seg) => sum + seg.currentSpeed, 0) /
+      validSegments.length;
     const avgFreeFlow =
-      flowData.reduce((sum, seg) => sum + seg.freeFlowSpeedKmH, 0) /
-      flowData.length;
+      validSegments.reduce((sum, seg) => sum + seg.freeFlowSpeedKmH, 0) /
+      validSegments.length;
 
     // Calculate congestion as percentage of free flow speed
     const congestion = Math.max(
@@ -254,7 +267,8 @@ export const getTrafficCongestionLevel = async (
     );
     return Math.round(congestion);
   } catch {
-    return 50;
+    // Return a default moderate traffic level on error
+    return 45;
   }
 };
 
