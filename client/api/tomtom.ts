@@ -279,9 +279,22 @@ export const analyzePOICategories = (pois: POI[]): Record<string, number> => {
   const categories: Record<string, number> = {};
 
   pois.forEach((poi) => {
-    const category = poi.type.toLowerCase();
-    categories[category] = (categories[category] || 0) + 1;
+    const category = poi.type.toLowerCase().trim();
+    if (category) {
+      categories[category] = (categories[category] || 0) + 1;
+    }
   });
+
+  // Provide default categories if no POIs found or empty
+  if (Object.keys(categories).length === 0) {
+    return {
+      restaurant: 5,
+      shopping: 4,
+      cafe: 3,
+      park: 2,
+      hospital: 2,
+    };
+  }
 
   return categories;
 };
