@@ -102,21 +102,25 @@ export const getTrafficFlow: RequestHandler = async (req, res) => {
         : [response.data.flowSegmentData]
       : [];
 
-    const flowData = segments.map((segment: any) => ({
-      id: segment.segmentId,
-      speedKmH: segment.currentSpeed,
-      freeFlowSpeedKmH: segment.freeFlowSpeed,
-      currentSpeed: segment.currentSpeed,
-      position: {
-        lat: segment.coordinates[0][1],
-        lon: segment.coordinates[0][0],
-      },
-    }));
+    const flowData = segments
+      .filter((segment: any) => segment && segment.coordinates && segment.coordinates[0])
+      .map((segment: any) => ({
+        id: segment.segmentId,
+        speedKmH: segment.currentSpeed,
+        freeFlowSpeedKmH: segment.freeFlowSpeed,
+        currentSpeed: segment.currentSpeed,
+        position: {
+          lat: segment.coordinates[0][1],
+          lon: segment.coordinates[0][0],
+        },
+      }));
 
+    // Return empty array if no valid traffic data
     res.json(flowData);
   } catch (error: any) {
     console.error("Error fetching traffic flow:", error.message);
-    res.status(500).json({ error: "Failed to fetch traffic flow" });
+    // Return empty array to allow app to continue with fallback data
+    res.json([]);
   }
 };
 
