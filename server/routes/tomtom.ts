@@ -93,18 +93,23 @@ export const getTrafficFlow: RequestHandler = async (req, res) => {
       },
     );
 
-    const flowData = (response.data.flowSegmentData || []).map(
-      (segment: any) => ({
-        id: segment.segmentId,
-        speedKmH: segment.currentSpeed,
-        freeFlowSpeedKmH: segment.freeFlowSpeed,
-        currentSpeed: segment.currentSpeed,
-        position: {
-          lat: segment.coordinates[0][1],
-          lon: segment.coordinates[0][0],
-        },
-      }),
-    );
+    // Handle both single segment and array responses from TomTom
+    const segments = response.data.flowSegmentData
+      ? Array.isArray(response.data.flowSegmentData)
+        ? response.data.flowSegmentData
+        : [response.data.flowSegmentData]
+      : [];
+
+    const flowData = segments.map((segment: any) => ({
+      id: segment.segmentId,
+      speedKmH: segment.currentSpeed,
+      freeFlowSpeedKmH: segment.freeFlowSpeed,
+      currentSpeed: segment.currentSpeed,
+      position: {
+        lat: segment.coordinates[0][1],
+        lon: segment.coordinates[0][0],
+      },
+    }));
 
     res.json(flowData);
   } catch (error: any) {
