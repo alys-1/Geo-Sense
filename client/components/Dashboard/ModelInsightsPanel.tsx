@@ -65,10 +65,15 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
       {/* Model Status */}
       {modelStatus && (
         <Card className="bg-slate-800 border-slate-700 p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Model Status</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Model Status
+          </h3>
           <div className="space-y-2">
             <p className="text-slate-300">
-              Status: <span className="font-semibold text-cyan-400">{modelStatus.status}</span>
+              Status:{" "}
+              <span className="font-semibold text-cyan-400">
+                {modelStatus.status}
+              </span>
             </p>
             <div className="flex gap-2 flex-wrap">
               {modelStatus.zones.map((zone: string) => (
@@ -80,7 +85,9 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
                     borderLeft: `3px solid ${modelStatus.zone_colors[zone]}`,
                   }}
                 >
-                  <span style={{ color: modelStatus.zone_colors[zone] }}>{zone}</span>
+                  <span style={{ color: modelStatus.zone_colors[zone] }}>
+                    {zone}
+                  </span>
                 </div>
               ))}
             </div>
@@ -93,7 +100,9 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
         <Card className="bg-slate-800 border-slate-700 p-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-lg font-semibold text-white">Feature Importance</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Feature Importance
+            </h3>
           </div>
           <p className="text-sm text-slate-400 mb-4">
             Importance scores from Random Forest classifier
@@ -102,7 +111,12 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
             <BarChart data={featureImportance.chart_data} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis type="number" stroke="#94A3B8" />
-              <YAxis dataKey="feature" type="category" stroke="#94A3B8" width={100} />
+              <YAxis
+                dataKey="feature"
+                type="category"
+                stroke="#94A3B8"
+                width={100}
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#1E293B",
@@ -123,7 +137,8 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
             PCA Cluster Visualization
           </h3>
           <p className="text-sm text-slate-400 mb-4">
-            Variance explained: {(pcaData.total_variance_explained * 100).toFixed(1)}%
+            Variance explained:{" "}
+            {(pcaData.total_variance_explained * 100).toFixed(1)}%
           </p>
           <ResponsiveContainer width="100%" height={300}>
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -131,7 +146,11 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
               <XAxis
                 dataKey="x"
                 stroke="#94A3B8"
-                label={{ value: "PC1", position: "insideBottomRight", offset: -5 }}
+                label={{
+                  value: "PC1",
+                  position: "insideBottomRight",
+                  offset: -5,
+                }}
               />
               <YAxis
                 dataKey="y"
@@ -164,7 +183,9 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
         <Card className="bg-slate-800 border-slate-700 p-6">
           <div className="flex items-center gap-2 mb-4">
             <AlertCircle className="w-5 h-5 text-amber-400" />
-            <h3 className="text-lg font-semibold text-white">Model Performance</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Model Performance
+            </h3>
           </div>
           <div className="mb-6">
             <p className="text-sm text-slate-400 mb-2">Overall Accuracy</p>
@@ -178,9 +199,14 @@ const ModelInsightsPanel = ({ selectedZone }: ModelInsightsPanelProps) => {
             <table className="w-full text-sm">
               <thead>
                 <tr>
-                  <th className="text-left px-2 py-2 text-slate-300">Predicted →</th>
+                  <th className="text-left px-2 py-2 text-slate-300">
+                    Predicted →
+                  </th>
                   {confusionMatrix.labels.map((label: string) => (
-                    <th key={label} className="text-center px-2 py-2 text-slate-300">
+                    <th
+                      key={label}
+                      className="text-center px-2 py-2 text-slate-300"
+                    >
                       {label}
                     </th>
                   ))}

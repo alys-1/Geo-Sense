@@ -104,7 +104,11 @@ export interface ConfusionMatrixData {
 
 export const flaskML = {
   // Data Fetching
-  async fetchPOI(lat: number, lon: number, radius: number = 1000): Promise<POIData> {
+  async fetchPOI(
+    lat: number,
+    lon: number,
+    radius: number = 1000,
+  ): Promise<POIData> {
     try {
       const response = await axios.post(`${FLASK_BASE_URL}/fetch_poi`, {
         lat,
@@ -146,7 +150,11 @@ export const flaskML = {
   },
 
   // Zone Analysis & Classification
-  async analyzeZone(lat: number, lon: number, radius: number = 1000): Promise<ZoneAnalysis> {
+  async analyzeZone(
+    lat: number,
+    lon: number,
+    radius: number = 1000,
+  ): Promise<ZoneAnalysis> {
     try {
       const response = await axios.post(`${FLASK_BASE_URL}/analyze`, {
         lat,
@@ -161,7 +169,11 @@ export const flaskML = {
   },
 
   // Feature Engineering
-  async getFeatures(lat: number, lon: number, radius: number = 1000): Promise<FeaturesResponse> {
+  async getFeatures(
+    lat: number,
+    lon: number,
+    radius: number = 1000,
+  ): Promise<FeaturesResponse> {
     try {
       const response = await axios.post(`${FLASK_BASE_URL}/features`, {
         lat,
@@ -186,7 +198,11 @@ export const flaskML = {
     }
   },
 
-  async getFeatureImportance(): Promise<{ features: string[]; importance: number[]; chart_data: any[] }> {
+  async getFeatureImportance(): Promise<{
+    features: string[];
+    importance: number[];
+    chart_data: any[];
+  }> {
     try {
       const response = await axios.get(`${FLASK_BASE_URL}/feature_importance`);
       return response.data;

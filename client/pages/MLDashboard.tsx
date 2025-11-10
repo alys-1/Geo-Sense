@@ -10,14 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Loader,
-  Map,
-  BarChart3,
-  Brain,
-  Zap,
-  AlertCircle,
-} from "lucide-react";
+import { Loader, Map, BarChart3, Brain, Zap, AlertCircle } from "lucide-react";
 import MapView from "@/components/Dashboard/MapView";
 import AnalyticsView from "@/components/Dashboard/AnalyticsView";
 import ModelInsightsPanel from "@/components/Dashboard/ModelInsightsPanel";
@@ -156,7 +149,10 @@ const MLDashboard = () => {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Quick Location
             </label>
-            <Select value={selectedLocation} onValueChange={handleLocationSelect}>
+            <Select
+              value={selectedLocation}
+              onValueChange={handleLocationSelect}
+            >
               <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
                 <SelectValue />
               </SelectTrigger>
@@ -240,7 +236,9 @@ const MLDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Zone Type */}
               <div>
-                <p className="text-slate-400 text-sm mb-2">Zone Classification</p>
+                <p className="text-slate-400 text-sm mb-2">
+                  Zone Classification
+                </p>
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full"
@@ -260,7 +258,7 @@ const MLDashboard = () => {
                 <p className="text-slate-400 text-sm mb-2">Confidence Score</p>
                 <p className="text-2xl font-bold text-cyan-400">
                   {(selectedZone.zone_classification.confidence * 100).toFixed(
-                    1
+                    1,
                   )}
                   %
                 </p>
@@ -277,30 +275,36 @@ const MLDashboard = () => {
 
             {/* Zone Type Probabilities */}
             <div className="mt-6 pt-6 border-t border-slate-700">
-              <p className="text-slate-400 text-sm mb-3">Zone Type Probabilities</p>
+              <p className="text-slate-400 text-sm mb-3">
+                Zone Type Probabilities
+              </p>
               <div className="space-y-2">
-                {Object.entries(selectedZone.zone_classification.probabilities).map(
-                  ([zoneType, probability]) => (
-                    <div key={zoneType} className="flex items-center gap-3">
-                      <span className="text-slate-300 min-w-24">{zoneType}</span>
-                      <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
-                          style={{ width: `${(probability as number) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-slate-300 min-w-12 text-right">
-                        {((probability as number) * 100).toFixed(0)}%
-                      </span>
+                {Object.entries(
+                  selectedZone.zone_classification.probabilities,
+                ).map(([zoneType, probability]) => (
+                  <div key={zoneType} className="flex items-center gap-3">
+                    <span className="text-slate-300 min-w-24">{zoneType}</span>
+                    <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
+                        style={{ width: `${(probability as number) * 100}%` }}
+                      />
                     </div>
-                  )
-                )}
+                    <span className="text-slate-300 min-w-12 text-right">
+                      {((probability as number) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </Card>
 
           {/* Tabs for different views */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
               <TabsTrigger
                 value="map"
@@ -328,7 +332,8 @@ const MLDashboard = () => {
             {/* Map View */}
             <TabsContent value="map" className="space-y-6">
               <p className="text-slate-400 text-sm">
-                POI distribution and traffic heatmap for {selectedZone.features.dominant_category}
+                POI distribution and traffic heatmap for{" "}
+                {selectedZone.features.dominant_category}
               </p>
             </TabsContent>
 
@@ -351,16 +356,18 @@ const MLDashboard = () => {
               Engineered Features
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(selectedZone.features.values).map(([key, value]) => (
-                <div key={key} className="bg-slate-700 rounded-lg p-3">
-                  <p className="text-xs text-slate-400 capitalize mb-1">
-                    {key.replace(/_/g, " ")}
-                  </p>
-                  <p className="text-lg font-semibold text-cyan-400">
-                    {typeof value === "number" ? value.toFixed(2) : value}
-                  </p>
-                </div>
-              ))}
+              {Object.entries(selectedZone.features.values).map(
+                ([key, value]) => (
+                  <div key={key} className="bg-slate-700 rounded-lg p-3">
+                    <p className="text-xs text-slate-400 capitalize mb-1">
+                      {key.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-lg font-semibold text-cyan-400">
+                      {typeof value === "number" ? value.toFixed(2) : value}
+                    </p>
+                  </div>
+                ),
+              )}
             </div>
           </Card>
 
@@ -385,7 +392,8 @@ const MLDashboard = () => {
               <div>
                 <p className="text-slate-400 text-sm mb-2">Free Flow Speed</p>
                 <p className="text-2xl font-bold text-green-400">
-                  {selectedZone.traffic.free_flow_speed?.toFixed(1) || "N/A"} km/h
+                  {selectedZone.traffic.free_flow_speed?.toFixed(1) || "N/A"}{" "}
+                  km/h
                 </p>
               </div>
               <div>
