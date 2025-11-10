@@ -66,10 +66,12 @@ export const searchPOIs: RequestHandler = async (req, res) => {
       address: result.address?.freeformAddress,
     }));
 
+    // Return empty array if no results (some areas may not have POI data)
     res.json(pois);
   } catch (error: any) {
     console.error("Error fetching POIs:", error.message);
-    res.status(500).json({ error: "Failed to fetch POIs" });
+    // Return empty array instead of error to allow the app to continue
+    res.json([]);
   }
 };
 
