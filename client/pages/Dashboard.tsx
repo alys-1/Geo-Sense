@@ -32,6 +32,7 @@ import {
 import { generateZoneSummary } from "@/api/gemini";
 import MapView from "@/components/Dashboard/MapView";
 import AnalyticsView from "@/components/Dashboard/AnalyticsView";
+import { mlAnalyze, mlHealth } from "@/api/ml";
 
 interface Zone {
   id: number;
@@ -340,6 +341,29 @@ const Dashboard = () => {
           >
             <Eye className="w-4 h-4" />
             POI Layer
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={async () => {
+              try {
+                await mlHealth();
+                const res = await mlAnalyze({
+                  lat: selectedZone.lat,
+                  lon: selectedZone.lng,
+                  radius: 1000,
+                });
+                console.log("ML analyze result:", res);
+                alert(`ML OK: ${res?.zone_classification?.zone_type || "success"}`);
+              } catch (e: any) {
+                console.error(e);
+                alert("ML analyze failed. Check server logs.");
+              }
+            }}
+          >
+            <Sparkles className="w-4 h-4" />
+            Test ML Analyze
           </Button>
         </div>
       </div>
